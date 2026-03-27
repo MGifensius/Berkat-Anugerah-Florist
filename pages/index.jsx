@@ -22,7 +22,7 @@ const FEATURES = [
 const CAT_TILES = [
   { key: 'papan-bunga',     emoji: '🪧', label: 'Papan Bunga',    sub: 'Mulai Rp 500.000' },
   { key: 'standing-flower', emoji: '🌷', label: 'Standing Flower',sub: 'Mulai Rp 500.000' },
-  { key: 'dekorasi-duka',   emoji: '🕊',  label: 'Dekorasi Duka',  sub: 'Mulai Rp 5.000.000' },
+  { key: 'dekorasi-duka',   emoji: '🕊',  label: 'Dekorasi Duka',  sub: 'Mulai Rp 800.000' },
   { key: 'hand-bucket',     emoji: '💐', label: 'Hand Bucket',    sub: 'Mulai Rp 350.000' },
 ];
 

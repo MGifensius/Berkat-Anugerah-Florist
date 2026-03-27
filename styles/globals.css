@@ -727,66 +727,121 @@ header.scrolled { box-shadow: 0 2px 20px rgba(0,0,0,.08); }
 }
 @keyframes fadeIn { from { opacity:0 } to { opacity:1 } }
 
-/* ─── MODAL BOX ─── */
+/* ════════════════════════════════════════════════════
+   PRODUCT MODAL — stable aspect-ratio image layout
+   ════════════════════════════════════════════════════ */
+
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 1000;
+  background: rgba(0,0,0,.72);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+  animation: fadeOverlayIn .2s ease;
+}
+@keyframes fadeOverlayIn { from { opacity:0 } to { opacity:1 } }
+
 .modal-box {
   position: relative;
   background: var(--white);
-  border-radius: 12px;
+  border-radius: 4px;
   display: grid;
-  grid-template-columns: 1fr 360px;
-  max-width: 880px; width: 100%;
+  grid-template-columns: 1fr 340px;
+  width: 100%; max-width: 860px;
   max-height: 90vh;
   overflow: hidden;
-  box-shadow: 0 24px 80px rgba(0,0,0,.35);
-  animation: slideUp .25s ease;
+  box-shadow: 0 32px 80px rgba(0,0,0,.4);
+  animation: modalSlideUp .25s ease;
 }
-@keyframes slideUp { from { transform:translateY(30px);opacity:0 } to { transform:translateY(0);opacity:1 } }
+@keyframes modalSlideUp { from { transform:translateY(28px);opacity:0 } to { transform:none;opacity:1 } }
 
-/* ─── CLOSE BUTTON ─── */
+/* ── CLOSE ── */
 .modal-close {
-  position: absolute; top: 14px; right: 14px; z-index: 10;
-  background: rgba(0,0,0,.5); color: #fff;
+  position: absolute; top: 12px; right: 12px; z-index: 20;
+  background: rgba(0,0,0,.55); color: #fff;
   border: none; border-radius: 50%;
-  width: 32px; height: 32px;
-  font-size: 13px; cursor: pointer;
+  width: 30px; height: 30px;
   display: flex; align-items: center; justify-content: center;
-  transition: background .2s;
+  cursor: pointer; transition: background .2s;
 }
-.modal-close:hover { background: rgba(0,0,0,.8); }
+.modal-close:hover { background: rgba(0,0,0,.85); }
+.modal-close svg { stroke: #fff; }
 
-/* ─── GALLERY ─── */
+/* ── GALLERY (left column) ── */
 .modal-gallery {
-  background: #111;
   display: flex; flex-direction: column;
+  background: #0e0e0e;
   overflow: hidden;
 }
-.modal-main-img {
-  flex: 1; overflow: hidden; min-height: 0;
-}
-.modal-main-img img {
-  width: 100%; height: 100%; object-fit: cover;
-  display: block;
-  transition: opacity .3s ease;
-}
-.modal-thumbs {
-  display: flex; gap: 4px; padding: 6px;
-  background: rgba(0,0,0,.3);
+
+/* Main image: fixed 4:3 aspect ratio — never shifts regardless of image count */
+.modal-main-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: #1a1a1a;
   flex-shrink: 0;
 }
-.modal-thumb {
-  flex: 1; border: 2px solid transparent;
-  border-radius: 5px; overflow: hidden;
-  cursor: pointer; padding: 0; background: none;
-  aspect-ratio: 1; transition: border-color .2s;
+.modal-main-img-el {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center;
+  display: block;
+  animation: imgFadeIn .2s ease;
 }
-.modal-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.modal-thumb.active { border-color: var(--accent); }
-.modal-thumb:hover { border-color: var(--gold); }
+@keyframes imgFadeIn { from { opacity:0 } to { opacity:1 } }
 
-/* ─── MODAL INFO ─── */
+/* Nav arrows */
+.modal-nav {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  background: rgba(255,255,255,.18);
+  border: none; color: #fff;
+  font-size: 28px; line-height: 1;
+  width: 38px; height: 60px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; z-index: 5; transition: background .2s;
+}
+.modal-nav:hover { background: rgba(255,255,255,.38); }
+.modal-nav-prev { left: 0; }
+.modal-nav-next { right: 0; }
+
+/* Dot indicators */
+.modal-dots {
+  position: absolute; bottom: 10px; left: 0; right: 0;
+  display: flex; justify-content: center; gap: 5px; z-index: 5;
+}
+.modal-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: rgba(255,255,255,.4);
+  border: none; cursor: pointer; padding: 0;
+  transition: background .2s, transform .2s;
+}
+.modal-dot.active { background: #fff; transform: scale(1.25); }
+
+/* Thumbnail strip — fixed height, never changes main image height */
+.modal-thumbs-strip {
+  display: flex; gap: 3px; padding: 6px;
+  background: rgba(0,0,0,.45);
+  height: 68px;
+  flex-shrink: 0;
+  overflow-x: auto;
+}
+.modal-thumb-btn {
+  width: 56px; height: 56px; flex-shrink: 0;
+  border: 2px solid transparent; border-radius: 3px;
+  overflow: hidden; cursor: pointer;
+  padding: 0; background: none;
+  opacity: .55; transition: opacity .2s, border-color .2s;
+}
+.modal-thumb-btn img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.modal-thumb-btn.active { border-color: var(--accent); opacity: 1; }
+.modal-thumb-btn:hover { opacity: .85; }
+
+/* ── INFO (right column) ── */
 .modal-info {
-  padding: 36px 32px;
   display: flex; flex-direction: column;
+  justify-content: space-between;
+  padding: 32px 28px 28px;
   overflow-y: auto;
 }
 .modal-cat {
@@ -795,150 +850,70 @@ header.scrolled { box-shadow: 0 2px 20px rgba(0,0,0,.08); }
 }
 .modal-name {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 26px; font-weight: 600; line-height: 1.2;
-  color: var(--charcoal); margin-bottom: 16px;
+  font-size: 24px; font-weight: 600; line-height: 1.25;
+  color: var(--charcoal); margin-bottom: 20px;
 }
 .modal-price-row {
   display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
   margin-bottom: 14px;
 }
-.modal-old-price {
-  font-size: 13px; color: var(--light);
-  text-decoration: line-through;
-}
 .modal-price {
-  font-size: 22px; font-weight: 700; color: var(--charcoal);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 26px; font-weight: 600; color: var(--charcoal);
 }
-.modal-custom-tag {
-  font-size: 10px; letter-spacing: 1px; text-transform: uppercase;
-  background: var(--accent-light); color: var(--accent);
-  padding: 3px 9px; border-radius: 20px; font-weight: 600;
+.modal-old-price {
+  font-size: 14px; color: var(--light);
+  text-decoration: line-through; align-self: flex-end;
 }
-.modal-badge {
-  display: inline-block;
-  font-size: 10px; letter-spacing: 1.2px; text-transform: uppercase;
-  padding: 4px 10px; border-radius: 4px; font-weight: 700;
-  background: var(--accent-light); color: var(--accent);
-  margin-bottom: 18px; width: fit-content;
-}
-.modal-badge.badge-hot { background: #fff0f0; color: var(--red); }
-.modal-badge.badge-new { background: #eefaf3; color: #2e7d32; }
-.modal-badge.badge-sale { background: #fff8e1; color: #e65100; }
-.modal-divider {
-  height: 1px; background: var(--border); margin: 18px 0;
-}
-.modal-wa-btn {
-  display: flex; align-items: center; justify-content: center; gap: 9px;
-  width: 100%; padding: 14px 20px;
-  background: var(--wa); color: #fff;
-  border: none; border-radius: 8px;
-  font-size: 13.5px; font-weight: 600; letter-spacing: .5px;
-  cursor: pointer; transition: background .2s, transform .15s;
-}
-.modal-wa-btn:hover { background: var(--wa-dark); transform: translateY(-1px); }
-.modal-wa-btn.modal-wa-custom { background: var(--custom-purple); }
-.modal-wa-btn.modal-wa-custom:hover { background: #4e3a78; }
-.modal-note {
-  font-size: 11.5px; color: var(--light); text-align: center;
-  margin-top: 12px; line-height: 1.5;
-}
-
-/* ─── MODAL RESPONSIVE ─── */
-@media (max-width: 700px) {
-  .modal-box {
-    grid-template-columns: 1fr;
-    grid-template-rows: 55vw 1fr;
-    max-height: 95vh;
-  }
-  .modal-gallery { max-height: 55vw; }
-  .modal-info { padding: 24px 20px; }
-  .modal-name { font-size: 20px; }
-  .modal-price { font-size: 18px; }
-}
-
-/* ─── PROMO RIBBON (Product Card) ─── */
-.product-promo-ribbon {
-  position: absolute;
-  top: 12px; left: 0;
-  background: var(--red);
-  color: #fff;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  padding: 4px 10px 4px 10px;
-  display: flex; align-items: center; gap: 5px;
-  border-radius: 0 3px 3px 0;
-  box-shadow: 0 2px 8px rgba(0,0,0,.18);
-  z-index: 2;
-}
-.product-promo-ribbon svg { flex-shrink: 0; }
-
-/* ─── PROMO TAG (Modal) ─── */
 .modal-promo-tag {
   font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
   background: var(--red); color: #fff;
-  padding: 3px 8px; border-radius: 3px;
-  align-self: center;
+  padding: 3px 8px; border-radius: 3px; align-self: center;
+}
+.modal-custom-tag {
+  font-size: 10px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+  background: var(--accent-light); color: var(--accent);
+  padding: 3px 8px; border-radius: 3px; align-self: center;
+}
+.modal-badge {
+  display: inline-flex; align-items: center;
+  font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+  padding: 3px 10px; border-radius: 2px; margin-bottom: 10px;
+}
+.badge-hot  { background: var(--charcoal); color: #fff; }
+.badge-new  { background: var(--green);    color: #fff; }
+.badge-sale { background: var(--red);      color: #fff; }
+
+.modal-divider {
+  border: none; border-top: 1px solid var(--border);
+  margin: 20px 0 20px;
+}
+.modal-wa-btn {
+  display: flex; align-items: center; justify-content: center; gap: 9px;
+  width: 100%;
+  background: var(--wa); color: #fff;
+  font-size: 13px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase;
+  padding: 14px 0; border: none; cursor: pointer;
+  border-radius: 3px; transition: background .2s; margin-bottom: 12px;
+}
+.modal-wa-btn:hover { background: var(--wa-dark); }
+.modal-wa-custom { background: var(--accent); }
+.modal-wa-custom:hover { background: #9a6e48; }
+.modal-note {
+  font-size: 11.5px; color: var(--light); line-height: 1.6; text-align: center;
 }
 
-/* ─── IC-ICON SVG fix (contact cards — icons not emoji) ─── */
-.ic-icon { color: var(--accent); }
-.ic-icon svg { display: block; }
-
-/* ─── FST-ICON SVG fix (features strip) ─── */
-.fst-icon { color: var(--accent); margin-bottom: 16px; display: flex; justify-content: center; }
-.fst-icon svg { display: block; }
-
-/* ─── CT-ICON SVG fix (category tiles) ─── */
-.ct-icon { color: var(--accent); }
-.ct-icon svg { display: block; }
-
-/* ─── ADDR-ROW icon ─── */
-.addr-icon { color: var(--accent); display: flex; align-items: center; justify-content: center; }
-
-/* ─── WA-CARD icon ─── */
-.wa-card-icon { color: #fff; display: flex; align-items: center; justify-content: center; }
-.wa-card-arrow { color: rgba(255,255,255,.6); display: flex; align-items: center; }
-
-/* ─── EMOJI CATEGORY ICONS — monochrome theme filter ─── */
-/*
-   Emoji can't follow CSS color, but we can desaturate them
-   and tint to warm sepia to match --accent (#b5885c).
-   grayscale → sepia chain converts any color emoji to a
-   warm neutral that reads as part of the site palette.
-*/
-.cat-emoji {
-  font-size: 24px;
-  display: block;
-  line-height: 1;
-  filter: grayscale(1) sepia(0.55) brightness(0.85);
-  transition: filter .2s;
+/* ── MOBILE ── */
+@media (max-width: 640px) {
+  .modal-box {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    max-height: 92vh;
+    border-radius: 12px 12px 0 0;
+    margin-top: auto;
+  }
+  .modal-main-wrap { aspect-ratio: 4 / 3; }
+  .modal-info { padding: 20px 18px 24px; }
+  .modal-name { font-size: 20px; }
+  .modal-price { font-size: 22px; }
 }
-.cat-tile:hover .cat-emoji {
-  filter: grayscale(1) sepia(1) saturate(1.4) brightness(0.9);
-}
-
-/* ─── ꫂ❁ Bunga Segar text icon ─── */
-.fst-icon .bunga-segar-char {
-  font-size: 26px;
-  line-height: 1;
-  color: var(--accent);
-  font-family: serif;
-  display: block;
-  text-align: center;
-}
-
-/* ─── IMAGE PLACEHOLDERS ─── */
-.product-img-placeholder,
-.modal-img-placeholder,
-.modal-thumb-placeholder {
-  width: 100%; height: 100%;
-  display: flex; align-items: center; justify-content: center;
-  background: var(--accent-light);
-  color: var(--accent);
-  font-size: 32px;
-  font-family: serif;
-}
-.modal-img-placeholder { font-size: 52px; }
-.modal-thumb-placeholder { font-size: 18px; }
